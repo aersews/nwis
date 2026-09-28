@@ -1,0 +1,31 @@
+WELL: WELL-017
+
+FORMATION: Formation-Y
+
+DEPTH: 2826
+
+EVENT: STUCK PIPE
+
+SEVERITY: SEVERE
+
+DATE: 2019-08-14
+
+DRILLING OBSERVATION:
+
+While drilling through Formation-Y at approximately 2826 m MD,
+the operation experienced increasing torque followed by inability
+to rotate and reciprocate the drill string normally.
+
+The drilling team stopped drilling and circulated the well.
+
+MITIGATION:
+
+The team worked the pipe, circulated at controlled flow rate,
+and performed backreaming operations.
+
+The pipe was successfully freed after approximately 37 minutes.
+
+LESSON LEARNED:
+
+Monitor torque and drag closely while drilling through this
+interval. Similar behaviour may indicate elevated stuck-pipe risk.

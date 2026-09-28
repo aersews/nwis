@@ -1,0 +1,70 @@
+# ── Python ────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ── Node / frontend ───────────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Secrets & environment ─────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*_rsa
+secrets/
+
+# ── Model / index caches (regenerate via the RAG pipeline) ────────────
+.cache/
+.cache/huggingface/
+sentence_transformers_cache/
+data/rag.index
+data/rag_metadata.json
+data/document_index.json
+*.faiss
+*.pkl
+*.joblib
+
+# ── Tooling & editor ──────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+
+# ── OS / runtime ──────────────────────────────────────────────────────
+*.log
+logs/
+*.pid
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/

@@ -1,0 +1,29 @@
+WELL: WELL-029
+
+FORMATION: Formation-Y
+
+DEPTH: 2818
+
+EVENT: MUD LOSS
+
+SEVERITY: SEVERE
+
+DATE: 2021-06-08
+
+DRILLING OBSERVATION:
+
+Partial loss of drilling fluid was observed while drilling
+through Formation-Y.
+
+Pit volume decreased while drilling continued.
+
+MITIGATION:
+
+The drilling team reduced flow rate and applied lost-circulation
+material.
+
+Circulation was restored after treatment.
+
+LESSON LEARNED:
+
+Monitor pit volume and flow behaviour closely in this interval.

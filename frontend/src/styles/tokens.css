@@ -1,0 +1,127 @@
+/* =========================================================
+   NWIS — DESIGN TOKENS
+   Industrial operations-centre system.
+   Four semantic hues only: healthy / warning / critical /
+   analytical. Everything else is surface + line + type.
+   ========================================================= */
+
+:root {
+  /* ---------------- SURFACE ---------------- */
+  --bg-abyss:     #05070c;
+  --bg-canvas:    #090c12;
+  --bg-surface-1: #0e1219;
+  --bg-surface-2: #131824;
+  --bg-surface-3: #1a2130;
+  --bg-inset:     #0a0d13;
+  --bg-veil:      #05070ccc;
+
+  /* ---------------- LINE ---------------- */
+  --line:         #1c2330;
+  --line-strong:  #29323f;
+  --line-soft:    #151a23;
+  --line-focus:   #4d9dff;
+
+  /* ---------------- TYPE ---------------- */
+  --text-hi:      #e9eef6;
+  --text:         #c2cbd8;
+  --text-mid:     #8a96a7;
+  --text-low:     #616d7e;
+  --text-faint:   #434e5c;
+
+  /* ---------------- SEMANTIC ---------------- */
+  --ok:           #35d08a;
+  --ok-bg:        #0e2b1f;
+  --ok-line:      #1c5a3e;
+
+  --info:         #4d9dff;
+  --info-bg:      #0d1d33;
+  --info-line:    #1d4372;
+
+  --warn:         #f0aa2b;
+  --warn-bg:      #2b2011;
+  --warn-line:    #6a4d15;
+
+  --high:         #ff7a3d;
+  --high-bg:      #2e1a0f;
+  --high-line:    #7a3c19;
+
+  --crit:         #ff4257;
+  --crit-bg:      #2f1119;
+  --crit-line:    #7d2231;
+
+  --neutral:      #7a879a;
+  --neutral-bg:   #141922;
+  --neutral-line: #262f3c;
+
+  /* ---------------- TYPE SCALE ---------------- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono",
+    "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --fs-display: 30px;
+  --fs-xl:      21px;
+  --fs-lg:      16px;
+  --fs-md:      13.5px;
+  --fs-sm:      12px;
+  --fs-xs:      11px;
+  --fs-label:   10px;
+
+  --lh-tight: 1.18;
+  --lh-snug:  1.35;
+  --lh-body:  1.55;
+
+  /* ---------------- SPACE ---------------- */
+  --s-1:  2px;
+  --s-2:  4px;
+  --s-3:  6px;
+  --s-4:  8px;
+  --s-5:  10px;
+  --s-6:  12px;
+  --s-7:  16px;
+  --s-8:  20px;
+  --s-9:  24px;
+  --s-10: 32px;
+  --s-11: 40px;
+
+  /* ---------------- GEOMETRY ---------------- */
+  --r-1: 2px;
+  --r-2: 3px;
+  --r-3: 5px;
+  --r-pill: 999px;
+
+  --shadow-1: 0 1px 2px #00000059;
+  --shadow-2: 0 8px 26px -8px #000000b8;
+  --shadow-3: 0 24px 60px -12px #000000d9;
+
+  /* ---------------- MOTION ---------------- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 120ms;
+  --t-base: 200ms;
+  --t-slow: 340ms;
+
+  /* ---------------- LAYOUT ---------------- */
+  --topbar-h: 54px;
+  --demobar-h: 40px;
+  --rail-w: 168px;
+  --gutter: 14px;
+  --z-header: 60;
+  --z-sticky: 40;
+  --z-legend: 40;
+  /* Leaflet allocates z-index values up to 1000 for its panes and
+     controls, so every application overlay starts above that range
+     or the map will paint on top of a dialog. */
+  --z-drawer: 1100;
+  --z-modal: 1200;
+  --z-toast: 1300;
+}
+
+/* Risk severity → colour triple, used by every risk-aware
+   component so a level always looks identical everywhere. */
+[data-sev="low"]     { --sev: var(--ok);    --sev-bg: var(--ok-bg);    --sev-line: var(--ok-line); }
+[data-sev="medium"]  { --sev: var(--warn);  --sev-bg: var(--warn-bg);  --sev-line: var(--warn-line); }
+[data-sev="high"]    { --sev: var(--high);  --sev-bg: var(--high-bg);  --sev-line: var(--high-line); }
+[data-sev="critical"]{ --sev: var(--crit);  --sev-bg: var(--crit-bg);  --sev-line: var(--crit-line); }
+[data-sev="info"]    { --sev: var(--info);  --sev-bg: var(--info-bg);  --sev-line: var(--info-line); }
+[data-sev="none"]    { --sev: var(--neutral); --sev-bg: var(--neutral-bg); --sev-line: var(--neutral-line); }

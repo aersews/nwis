@@ -1,0 +1,29 @@
+WELL: WELL-012
+
+FORMATION: Formation-Y
+
+DEPTH: 2832
+
+EVENT: STUCK PIPE
+
+SEVERITY: MODERATE
+
+DATE: 2020-04-21
+
+DRILLING OBSERVATION:
+
+During drilling through Formation-Y, torque increased rapidly
+and drilling progress decreased.
+
+The drill string became temporarily immobile.
+
+MITIGATION:
+
+Circulation was established and the string was worked carefully.
+
+Backreaming was performed before drilling resumed.
+
+LESSON LEARNED:
+
+Elevated torque combined with declining drilling performance
+should be treated as an early warning indicator.

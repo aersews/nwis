@@ -1,0 +1,258 @@
+/* =========================================================
+   NWIS — CHARTS & TELEMETRY
+   ========================================================= */
+
+.stream {
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+  background: var(--bg-inset);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.stream__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-5) 0;
+}
+
+.stream__name {
+  font-size: var(--fs-label);
+  font-weight: 750;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-low);
+  line-height: 1.2;
+}
+
+.stream__reading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin-top: 3px;
+}
+
+.stream__value {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--text-hi);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stream__value.is-flash { animation: value-flash var(--t-slow) var(--ease); }
+
+@keyframes value-flash {
+  0% { color: var(--stream-color, var(--info)); }
+  100% { color: var(--text-hi); }
+}
+
+.stream__unit {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.stream__trend {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex: 0 0 auto;
+  padding-top: 2px;
+}
+
+.stream__delta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.stream__delta[data-dir="up"] { color: var(--trend-color); }
+.stream__delta[data-dir="down"] { color: var(--trend-color); }
+.stream__delta[data-dir="flat"] { color: var(--text-faint); }
+
+.stream__plot {
+  position: relative;
+  height: 74px;
+  margin-top: var(--s-4);
+  padding: 0 var(--s-5) var(--s-4);
+}
+
+.stream__plot svg { width: 100%; height: 100%; overflow: visible; }
+
+.stream__grid-line { stroke: var(--line-soft); stroke-width: 1; }
+.stream__area { fill: url(#streamFade); }
+.stream__line { fill: none; stroke: var(--stream-color, var(--info)); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.stream__head-dot { fill: var(--stream-color, var(--info)); }
+.stream__head-ring { fill: none; stroke: var(--stream-color, var(--info)); opacity: 0.35; }
+
+.stream__crosshair { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 2 3; }
+.stream__cursor-dot { fill: #fff; stroke: var(--stream-color, var(--info)); stroke-width: 1.5; }
+
+.stream__empty {
+  position: absolute;
+  inset: auto 0 26px 0;
+  text-align: center;
+  font-size: var(--fs-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.stream__axis {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  padding: 0 var(--s-5) var(--s-3);
+}
+
+.stream__readout {
+  position: absolute;
+  z-index: 3;
+  transform: translate(-50%, -100%);
+  background: #0d121af2;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-2);
+  padding: var(--s-2) var(--s-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-hi);
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: var(--shadow-2);
+}
+
+.stream__readout b { color: var(--stream-color, var(--info)); font-weight: 650; }
+
+/* ---- wide telemetry strip: value + trend + chart ---- */
+
+.tele-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-2);
+  overflow: hidden;
+}
+
+@media (max-width: 620px) {
+  .tele-strip { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- signal tile in the WHY panel ---- */
+
+.signal-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding: var(--s-3) 0;
+  border-bottom: 1px dotted var(--line);
+}
+
+.signal-tile:last-child { border-bottom: none; }
+
+.signal-tile__name {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  flex: 0 0 auto;
+  width: 58px;
+}
+
+.signal-tile__bar {
+  flex: 1 1 auto;
+  height: 4px;
+  background: var(--line-soft);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  position: relative;
+  min-width: 24px;
+}
+
+.signal-tile__fill {
+  height: 100%;
+  background: var(--tile-color, var(--info));
+  transition: width var(--t-slow) var(--ease-out), background var(--t-base) var(--ease);
+}
+
+.signal-tile__value {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  color: var(--tile-color, var(--text-hi));
+  flex: 0 0 auto;
+  min-width: 54px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---- ribbon (compact risk / depth history) ---- */
+
+.ribbon {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 30px;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.ribbon__bar {
+  flex: 1 1 0;
+  min-width: 1px;
+  background: var(--bar-color, var(--line-strong));
+  opacity: 0.55;
+  transition: opacity var(--t-fast) var(--ease);
+}
+
+.ribbon__bar:last-child { opacity: 1; }
+
+/* ---- depth progress track ---- */
+
+.deptrack {
+  position: relative;
+  height: 6px;
+  background: var(--bg-abyss);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+
+.deptrack__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, #1c5a3e, var(--ok));
+  transition: width var(--t-slow) var(--ease-out);
+}
+
+.deptrack__window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--warn);
+  border-right: 1px dashed var(--warn);
+  background: #f0aa2b1a;
+}
+
+.deptrack__marker {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--crit);
+  box-shadow: 0 0 6px #ff4257a6;
+}
