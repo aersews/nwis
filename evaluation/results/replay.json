@@ -1,0 +1,3373 @@
+{
+  "evaluation_type": "historical_replay",
+  "status": "PROTOTYPE DESCRIPTIVE",
+  "validated": false,
+  "dataset": {
+    "wells_csv": "data/wells.csv",
+    "events_csv": "data/events.csv",
+    "telemetry_csv": "data/drilling_data.csv",
+    "indexed_chunks": 3,
+    "synthetic": true,
+    "labelled": false,
+    "note": "Every record is synthetic. The event table is a demonstration fixture, not an evaluation set, and no ground-truth labels were created by an operator."
+  },
+  "method": {
+    "description": "Each well's recorded telemetry is replayed forward in a 5-frame rolling window. The first frame at which the risk index reaches 55.0 is compared against the depth of every event recorded against that well.",
+    "alert_threshold": 55.0,
+    "window_records": 5,
+    "depth_window_m": 50,
+    "formula": "lead distance = event depth - alert depth"
+  },
+  "summary": {
+    "wells_replayed": 30,
+    "wells_with_evaluable_events": 15,
+    "known_events_total": 15,
+    "known_events_detected_before": 15,
+    "detection_rate": null,
+    "descriptive_detection_rate": 1.0,
+    "detection_rate_note": "WITHHELD. The demonstration telemetry is not an independent record of the events: data/generate_demo_data.py injects a fixed precursor fingerprint within +/-45 m of every event depth it writes into events.csv. A detection rate measured against this pair is a tautology of the generator, not a measure of predictive capability. The descriptive value is retained above for transparency only and must not be quoted as an accuracy.",
+    "circularity": {
+      "detected": true,
+      "consequence": "Every event in the demonstration dataset is surrounded by a synthetic precursor. Alert detection against it measures the data generator, not the risk engine.",
+      "required_for_validation": "An independent labelled set: real recorded telemetry with incident outcomes annotated by an operator, where precursors are not injected."
+    },
+    "median_lead_distance_m": 4.42,
+    "min_lead_distance_m": 0.12,
+    "max_lead_distance_m": 23.79,
+    "lead_time_minutes": null,
+    "lead_time_note": "Not reported. The demonstration event table records no incident timestamps, so a lead time cannot be derived without fabrication.",
+    "validation_status": "NOT VALIDATED",
+    "insufficient_data": true,
+    "insufficient_data_reason": "Only 15 known event(s) are available, they are synthetic, and the telemetry carries an injected precursor at every event depth. A defensible detection rate needs an independent labelled set of at least 10 real cases."
+  },
+  "replays": [
+    {
+      "well_id": "WELL-001",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1854.16,
+        3466.21
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 3394.32,
+        "timestamp": "2026-01-02T14:00:00",
+        "risk_score": 87.3,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 37.078,
+            "observed_ratio": 0.3708,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 37% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 63.366,
+            "observed_ratio": 0.6337,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": true,
+            "detail": "Torque increase: observed 63% against a saturation point of 50% \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.081,
+            "observed_ratio": 0.081,
+            "normalised": 0.81,
+            "points_exact": 20.24999999999999,
+            "points": 20.2,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.08 sg against a saturation point of 0.10 sg \u2192 20.2 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 3.786,
+            "observed_ratio": 0.0379,
+            "normalised": 0.473,
+            "points_exact": 7.099442008768428,
+            "points": 7.1,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 4% against a saturation point of 8% \u2192 7.1 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 2,
+        "supporting_event_wells": [
+          "WELL-001",
+          "WELL-011"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0001",
+          "event": "Kick",
+          "formation": "Formation-Y",
+          "event_depth": 3426.16,
+          "severity": "Severe",
+          "alert_depth": 3423.99,
+          "alert_risk_score": 73.4,
+          "alert_risk_level": "HIGH",
+          "lead_distance_m": 2.17,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.631,
+          "torque": 1.507,
+          "ecd": 1.071,
+          "pit_volume": 0.943
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          2.17
+        ],
+        "median": 2.17,
+        "min": 2.17,
+        "max": 2.17
+      }
+    },
+    {
+      "well_id": "WELL-002",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.71,
+        3467.58
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2247.99,
+        "timestamp": "2026-01-01T10:40:00",
+        "risk_score": 59.8,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 3,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 19.958,
+            "observed_ratio": 0.1996,
+            "normalised": 0.665,
+            "points_exact": 23.28431372549019,
+            "points": 23.3,
+            "max_points": 35.0,
+            "threshold_crossed": false,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 20% against a saturation point of 30% \u2192 23.3 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 34.016,
+            "observed_ratio": 0.3402,
+            "normalised": 0.68,
+            "points_exact": 17.008069522036006,
+            "points": 17.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 34% against a saturation point of 50% \u2192 17.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.052,
+            "observed_ratio": 0.052,
+            "normalised": 0.52,
+            "points_exact": 13.00000000000001,
+            "points": 13.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.05 sg against a saturation point of 0.10 sg \u2192 13.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 3.489,
+            "observed_ratio": 0.0349,
+            "normalised": 0.436,
+            "points_exact": 6.542206187605023,
+            "points": 6.5,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 3% against a saturation point of 8% \u2192 6.5 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-003",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1856.09,
+        3465.99
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 3422.5,
+        "timestamp": "2026-01-02T14:40:00",
+        "risk_score": 57.6,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 31.902,
+            "observed_ratio": 0.319,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 32% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 0% against a saturation point of 50% \u2192 0.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.088,
+            "observed_ratio": 0.088,
+            "normalised": 0.88,
+            "points_exact": 22.00000000000002,
+            "points": 22.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.09 sg against a saturation point of 0.10 sg \u2192 22.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.317,
+            "observed_ratio": 0.0032,
+            "normalised": 0.04,
+            "points_exact": 0.5946481665015003,
+            "points": 0.6,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 0% against a saturation point of 8% \u2192 0.6 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-004",
+      "formation": "Formation-Z",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1854.47,
+        3467.68
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": null,
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-005",
+      "formation": "Formation-X",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.12,
+        3467.02
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2513.54,
+        "timestamp": "2026-01-01T17:00:00",
+        "risk_score": 82.2,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 46.545,
+            "observed_ratio": 0.4654,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 47% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 33.471,
+            "observed_ratio": 0.3347,
+            "normalised": 0.669,
+            "points_exact": 16.73553719008265,
+            "points": 16.7,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 33% against a saturation point of 50% \u2192 16.7 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.099,
+            "observed_ratio": 0.099,
+            "normalised": 0.99,
+            "points_exact": 24.749999999999993,
+            "points": 24.8,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.10 sg against a saturation point of 0.10 sg \u2192 24.7 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 3.041,
+            "observed_ratio": 0.0304,
+            "normalised": 0.38,
+            "points_exact": 5.702645135724179,
+            "points": 5.7,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 3% against a saturation point of 8% \u2192 5.7 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 2,
+        "supporting_event_wells": [
+          "WELL-005",
+          "WELL-010"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0002",
+          "event": "Lost Circulation",
+          "formation": "Formation-X",
+          "event_depth": 2553.2,
+          "severity": "Moderate",
+          "alert_depth": 2543.96,
+          "alert_risk_score": 89.1,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 9.24,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.644,
+          "torque": 1.442,
+          "ecd": 1.074,
+          "pit_volume": 0.958
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          9.24
+        ],
+        "median": 9.24,
+        "min": 9.24,
+        "max": 9.24
+      }
+    },
+    {
+      "well_id": "WELL-006",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.31,
+        3465.65
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": null,
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-007",
+      "formation": "Formation-Z",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1854.0,
+        3467.35
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 3005.63,
+        "timestamp": "2026-01-02T04:40:00",
+        "risk_score": 85.9,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 33.069,
+            "observed_ratio": 0.3307,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 33% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 54.466,
+            "observed_ratio": 0.5447,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": true,
+            "detail": "Torque increase: observed 54% against a saturation point of 50% \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.079,
+            "observed_ratio": 0.079,
+            "normalised": 0.79,
+            "points_exact": 19.74999999999999,
+            "points": 19.8,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.08 sg against a saturation point of 0.10 sg \u2192 19.7 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 3.274,
+            "observed_ratio": 0.0327,
+            "normalised": 0.409,
+            "points_exact": 6.138670514479037,
+            "points": 6.1,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 3% against a saturation point of 8% \u2192 6.1 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 1,
+        "supporting_event_wells": [
+          "WELL-007"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0003",
+          "event": "Kick",
+          "formation": "Formation-Z",
+          "event_depth": 3035.7,
+          "severity": "Severe",
+          "alert_depth": 3031.43,
+          "alert_risk_score": 82.9,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 4.27,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.667,
+          "torque": 1.665,
+          "ecd": 1.055,
+          "pit_volume": 0.954
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          4.27
+        ],
+        "median": 4.27,
+        "min": 4.27,
+        "max": 4.27
+      }
+    },
+    {
+      "well_id": "WELL-008",
+      "formation": "Formation-Z",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.44,
+        3464.99
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": null,
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-009",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.43,
+        3466.68
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2778.85,
+        "timestamp": "2026-01-01T23:20:00",
+        "risk_score": 58.9,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 35.239,
+            "observed_ratio": 0.3524,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 35% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 31.235,
+            "observed_ratio": 0.3123,
+            "normalised": 0.625,
+            "points_exact": 15.617359413202935,
+            "points": 15.6,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 31% against a saturation point of 50% \u2192 15.6 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.019,
+            "observed_ratio": 0.019,
+            "normalised": 0.19,
+            "points_exact": 4.750000000000032,
+            "points": 4.8,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.02 sg against a saturation point of 0.10 sg \u2192 4.8 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 1.881,
+            "observed_ratio": 0.0188,
+            "normalised": 0.235,
+            "points_exact": 3.5272277227722872,
+            "points": 3.5,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 2% against a saturation point of 8% \u2192 3.5 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 1,
+        "supporting_event_wells": [
+          "WELL-027"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-010",
+      "formation": "Formation-X",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.06,
+        3466.01
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2134.5,
+        "timestamp": "2026-01-01T08:00:00",
+        "risk_score": 55.8,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 25.697,
+            "observed_ratio": 0.257,
+            "normalised": 0.857,
+            "points_exact": 29.980329041487845,
+            "points": 30.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 26% against a saturation point of 30% \u2192 30.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 1.728,
+            "observed_ratio": 0.0173,
+            "normalised": 0.035,
+            "points_exact": 0.8637873754152814,
+            "points": 0.8,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 2% against a saturation point of 50% \u2192 0.9 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.103,
+            "observed_ratio": 0.103,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": true,
+            "detail": "ECD increase: observed 0.10 sg against a saturation point of 0.10 sg \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 0% against a saturation point of 8% \u2192 0.0 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0004",
+          "event": "Stuck Pipe",
+          "formation": "Formation-X",
+          "event_depth": 2510.08,
+          "severity": "Severe",
+          "alert_depth": 2500.36,
+          "alert_risk_score": 73.1,
+          "alert_risk_level": "HIGH",
+          "lead_distance_m": 9.72,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.671,
+          "torque": 1.523,
+          "ecd": 1.069,
+          "pit_volume": 0.954
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          9.72
+        ],
+        "median": 9.72,
+        "min": 9.72,
+        "max": 9.72
+      }
+    },
+    {
+      "well_id": "WELL-011",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.9,
+        3466.72
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2778.99,
+        "timestamp": "2026-01-01T23:20:00",
+        "risk_score": 72.5,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 3,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 30.609,
+            "observed_ratio": 0.3061,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 31% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 0% against a saturation point of 50% \u2192 0.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.102,
+            "observed_ratio": 0.102,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": true,
+            "detail": "ECD increase: observed 0.10 sg against a saturation point of 0.10 sg \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 6.661,
+            "observed_ratio": 0.0666,
+            "normalised": 0.833,
+            "points_exact": 12.490145841545141,
+            "points": 12.5,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 7% against a saturation point of 8% \u2192 12.5 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 1,
+        "supporting_event_wells": [
+          "WELL-012"
+        ],
+        "retrieved_evidence": [
+          {
+            "source": "DDR_WELL-029.txt",
+            "well_id": "WELL-029",
+            "depth": 2818.0,
+            "relevance": 0.8724
+          }
+        ]
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0005",
+          "event": "Lost Circulation",
+          "formation": "Formation-Y",
+          "event_depth": 3401.48,
+          "severity": "Moderate",
+          "alert_depth": 3395.83,
+          "alert_risk_score": 96.8,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 5.65,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.622,
+          "torque": 1.419,
+          "ecd": 1.074,
+          "pit_volume": 0.939
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          5.65
+        ],
+        "median": 5.65,
+        "min": 5.65,
+        "max": 5.65
+      }
+    },
+    {
+      "well_id": "WELL-012",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.62,
+        3466.64
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2485.69,
+        "timestamp": "2026-01-01T16:20:00",
+        "risk_score": 71.2,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 3,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 33.06,
+            "observed_ratio": 0.3306,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 33% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 30.057,
+            "observed_ratio": 0.3006,
+            "normalised": 0.601,
+            "points_exact": 15.028535193405201,
+            "points": 15.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 30% against a saturation point of 50% \u2192 15.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.069,
+            "observed_ratio": 0.069,
+            "normalised": 0.69,
+            "points_exact": 17.249999999999986,
+            "points": 17.3,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.07 sg against a saturation point of 0.10 sg \u2192 17.2 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 2.084,
+            "observed_ratio": 0.0208,
+            "normalised": 0.261,
+            "points_exact": 3.908152332716471,
+            "points": 3.9,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 2% against a saturation point of 8% \u2192 3.9 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0006",
+          "event": "Stuck Pipe",
+          "formation": "Formation-Y",
+          "event_depth": 2812.39,
+          "severity": "Severe",
+          "alert_depth": 2806.95,
+          "alert_risk_score": 85.7,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 5.44,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.589,
+          "torque": 1.641,
+          "ecd": 1.072,
+          "pit_volume": 0.949
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          5.44
+        ],
+        "median": 5.44,
+        "min": 5.44,
+        "max": 5.44
+      }
+    },
+    {
+      "well_id": "WELL-013",
+      "formation": "Formation-Z",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1856.41,
+        3464.77
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2778.51,
+        "timestamp": "2026-01-01T23:20:00",
+        "risk_score": 77.8,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 25.0,
+            "observed_ratio": 0.25,
+            "normalised": 0.833,
+            "points_exact": 29.166666666666668,
+            "points": 29.2,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 25% against a saturation point of 30% \u2192 29.2 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 49.153,
+            "observed_ratio": 0.4915,
+            "normalised": 0.983,
+            "points_exact": 24.576271186440678,
+            "points": 24.6,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 49% against a saturation point of 50% \u2192 24.6 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.046,
+            "observed_ratio": 0.046,
+            "normalised": 0.46,
+            "points_exact": 11.50000000000001,
+            "points": 11.5,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.05 sg against a saturation point of 0.10 sg \u2192 11.5 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 6.672,
+            "observed_ratio": 0.0667,
+            "normalised": 0.834,
+            "points_exact": 12.509988014382753,
+            "points": 12.5,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 7% against a saturation point of 8% \u2192 12.5 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 2,
+        "supporting_event_wells": [
+          "WELL-013",
+          "WELL-019"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0007",
+          "event": "Kick",
+          "formation": "Formation-Z",
+          "event_depth": 2813.19,
+          "severity": "Severe",
+          "alert_depth": 2808.77,
+          "alert_risk_score": 89.0,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 4.42,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.652,
+          "torque": 1.566,
+          "ecd": 1.061,
+          "pit_volume": 0.948
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          4.42
+        ],
+        "median": 4.42,
+        "min": 4.42,
+        "max": 4.42
+      }
+    },
+    {
+      "well_id": "WELL-014",
+      "formation": "Formation-X",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.7,
+        3466.27
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2627.27,
+        "timestamp": "2026-01-01T19:40:00",
+        "risk_score": 75.2,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 35.918,
+            "observed_ratio": 0.3592,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 36% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 40.256,
+            "observed_ratio": 0.4026,
+            "normalised": 0.805,
+            "points_exact": 20.128022759601706,
+            "points": 20.1,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 40% against a saturation point of 50% \u2192 20.1 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.032,
+            "observed_ratio": 0.032,
+            "normalised": 0.32,
+            "points_exact": 8.000000000000007,
+            "points": 8.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.03 sg against a saturation point of 0.10 sg \u2192 8.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 6.457,
+            "observed_ratio": 0.0646,
+            "normalised": 0.807,
+            "points_exact": 12.106910488958984,
+            "points": 12.1,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 6% against a saturation point of 8% \u2192 12.1 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 1,
+        "supporting_event_wells": [
+          "WELL-014"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0008",
+          "event": "Lost Circulation",
+          "formation": "Formation-X",
+          "event_depth": 2663.64,
+          "severity": "Severe",
+          "alert_depth": 2639.85,
+          "alert_risk_score": 97.1,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 23.79,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.603,
+          "torque": 1.641,
+          "ecd": 1.065,
+          "pit_volume": 0.957
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          23.79
+        ],
+        "median": 23.79,
+        "min": 23.79,
+        "max": 23.79
+      }
+    },
+    {
+      "well_id": "WELL-015",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.17,
+        3467.88
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 1982.45,
+        "timestamp": "2026-01-01T04:20:00",
+        "risk_score": 60.0,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 35.364,
+            "observed_ratio": 0.3536,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 35% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 50.963,
+            "observed_ratio": 0.5096,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": true,
+            "detail": "Torque increase: observed 51% against a saturation point of 50% \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.00 sg against a saturation point of 0.10 sg \u2192 0.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 0% against a saturation point of 8% \u2192 0.0 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0009",
+          "event": "Lost Circulation",
+          "formation": "Formation-Y",
+          "event_depth": 2971.1,
+          "severity": "Moderate",
+          "alert_depth": 2961.31,
+          "alert_risk_score": 88.9,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 9.79,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.646,
+          "torque": 1.569,
+          "ecd": 1.081,
+          "pit_volume": 0.951
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          9.79
+        ],
+        "median": 9.79,
+        "min": 9.79,
+        "max": 9.79
+      }
+    },
+    {
+      "well_id": "WELL-016",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.97,
+        3466.6
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 3395.26,
+        "timestamp": "2026-01-02T14:00:00",
+        "risk_score": 62.2,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 26.669,
+            "observed_ratio": 0.2667,
+            "normalised": 0.889,
+            "points_exact": 31.114277958740495,
+            "points": 31.1,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 27% against a saturation point of 30% \u2192 31.1 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 13.272,
+            "observed_ratio": 0.1327,
+            "normalised": 0.265,
+            "points_exact": 6.635802469135809,
+            "points": 6.6,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 13% against a saturation point of 50% \u2192 6.6 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.089,
+            "observed_ratio": 0.089,
+            "normalised": 0.89,
+            "points_exact": 22.249999999999993,
+            "points": 22.3,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.09 sg against a saturation point of 0.10 sg \u2192 22.2 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 1.149,
+            "observed_ratio": 0.0115,
+            "normalised": 0.144,
+            "points_exact": 2.1545263788968665,
+            "points": 2.2,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 1% against a saturation point of 8% \u2192 2.2 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-017",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.11,
+        3466.67
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2626.54,
+        "timestamp": "2026-01-01T19:40:00",
+        "risk_score": 95.1,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 42.651,
+            "observed_ratio": 0.4265,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 43% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 53.826,
+            "observed_ratio": 0.5383,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": true,
+            "detail": "Torque increase: observed 54% against a saturation point of 50% \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.104,
+            "observed_ratio": 0.104,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": true,
+            "detail": "ECD increase: observed 0.10 sg against a saturation point of 0.10 sg \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 5.401,
+            "observed_ratio": 0.054,
+            "normalised": 0.675,
+            "points_exact": 10.126995281598223,
+            "points": 10.1,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 5% against a saturation point of 8% \u2192 10.1 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 1,
+        "supporting_event_wells": [
+          "WELL-017"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0010",
+          "event": "Kick",
+          "formation": "Formation-Y",
+          "event_depth": 2669.45,
+          "severity": "Severe",
+          "alert_depth": 2666.61,
+          "alert_risk_score": 81.1,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 2.84,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.631,
+          "torque": 1.597,
+          "ecd": 1.07,
+          "pit_volume": 0.941
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          2.84
+        ],
+        "median": 2.84,
+        "min": 2.84,
+        "max": 2.84
+      }
+    },
+    {
+      "well_id": "WELL-018",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.52,
+        3465.68
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2681.78,
+        "timestamp": "2026-01-01T21:00:00",
+        "risk_score": 62.6,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 26.441,
+            "observed_ratio": 0.2644,
+            "normalised": 0.881,
+            "points_exact": 30.847776434233502,
+            "points": 30.9,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 26% against a saturation point of 30% \u2192 30.8 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 18.235,
+            "observed_ratio": 0.1824,
+            "normalised": 0.365,
+            "points_exact": 9.11764705882353,
+            "points": 9.1,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 18% against a saturation point of 50% \u2192 9.1 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.062,
+            "observed_ratio": 0.062,
+            "normalised": 0.62,
+            "points_exact": 15.500000000000014,
+            "points": 15.5,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.06 sg against a saturation point of 0.10 sg \u2192 15.5 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 3.782,
+            "observed_ratio": 0.0378,
+            "normalised": 0.473,
+            "points_exact": 7.090869523164709,
+            "points": 7.1,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 4% against a saturation point of 8% \u2192 7.1 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 1,
+        "supporting_event_wells": [
+          "WELL-017"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0011",
+          "event": "Lost Circulation",
+          "formation": "Formation-Y",
+          "event_depth": 2941.36,
+          "severity": "Moderate",
+          "alert_depth": 2935.05,
+          "alert_risk_score": 79.4,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 6.31,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.614,
+          "torque": 1.584,
+          "ecd": 1.061,
+          "pit_volume": 0.952
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          6.31
+        ],
+        "median": 6.31,
+        "min": 6.31,
+        "max": 6.31
+      }
+    },
+    {
+      "well_id": "WELL-019",
+      "formation": "Formation-Z",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.54,
+        3465.63
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2135.35,
+        "timestamp": "2026-01-01T08:00:00",
+        "risk_score": 56.5,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 34.498,
+            "observed_ratio": 0.345,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 34% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 9.304,
+            "observed_ratio": 0.093,
+            "normalised": 0.186,
+            "points_exact": 4.651898734177207,
+            "points": 4.7,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 9% against a saturation point of 50% \u2192 4.7 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.063,
+            "observed_ratio": 0.063,
+            "normalised": 0.63,
+            "points_exact": 15.750000000000043,
+            "points": 15.7,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.06 sg against a saturation point of 0.10 sg \u2192 15.8 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.58,
+            "observed_ratio": 0.0058,
+            "normalised": 0.072,
+            "points_exact": 1.087232960325521,
+            "points": 1.1,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 1% against a saturation point of 8% \u2192 1.1 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0012",
+          "event": "Stuck Pipe",
+          "formation": "Formation-Z",
+          "event_depth": 2780.9,
+          "severity": "Severe",
+          "alert_depth": 2779.89,
+          "alert_risk_score": 84.1,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 1.01,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.591,
+          "torque": 1.534,
+          "ecd": 1.061,
+          "pit_volume": 0.949
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          1.01
+        ],
+        "median": 1.01,
+        "min": 1.01,
+        "max": 1.01
+      }
+    },
+    {
+      "well_id": "WELL-020",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1856.09,
+        3465.82
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2206.64,
+        "timestamp": "2026-01-01T09:40:00",
+        "risk_score": 59.8,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 3,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 27.449,
+            "observed_ratio": 0.2745,
+            "normalised": 0.915,
+            "points_exact": 32.02372562837679,
+            "points": 32.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 27% against a saturation point of 30% \u2192 32.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 31.521,
+            "observed_ratio": 0.3152,
+            "normalised": 0.63,
+            "points_exact": 15.760441292356198,
+            "points": 15.8,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 32% against a saturation point of 50% \u2192 15.8 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.048,
+            "observed_ratio": 0.048,
+            "normalised": 0.48,
+            "points_exact": 12.00000000000001,
+            "points": 12.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.05 sg against a saturation point of 0.10 sg \u2192 12.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 0% against a saturation point of 8% \u2192 0.0 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0013",
+          "event": "Stuck Pipe",
+          "formation": "Formation-Y",
+          "event_depth": 2976.41,
+          "severity": "Severe",
+          "alert_depth": 2976.29,
+          "alert_risk_score": 80.2,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 0.12,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.662,
+          "torque": 1.553,
+          "ecd": 1.071,
+          "pit_volume": 0.94
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          0.12
+        ],
+        "median": 0.12,
+        "min": 0.12,
+        "max": 0.12
+      }
+    },
+    {
+      "well_id": "WELL-021",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1856.74,
+        3464.96
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 3242.12,
+        "timestamp": "2026-01-02T10:20:00",
+        "risk_score": 71.2,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 3,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 38.006,
+            "observed_ratio": 0.3801,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 38% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 44.385,
+            "observed_ratio": 0.4439,
+            "normalised": 0.888,
+            "points_exact": 22.19271623672231,
+            "points": 22.2,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 44% against a saturation point of 50% \u2192 22.2 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.051,
+            "observed_ratio": 0.051,
+            "normalised": 0.51,
+            "points_exact": 12.749999999999984,
+            "points": 12.7,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.05 sg against a saturation point of 0.10 sg \u2192 12.7 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.695,
+            "observed_ratio": 0.0069,
+            "normalised": 0.087,
+            "points_exact": 1.3029881862404498,
+            "points": 1.3,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 1% against a saturation point of 8% \u2192 1.3 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-022",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1856.59,
+        3464.79
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2232.31,
+        "timestamp": "2026-01-01T10:20:00",
+        "risk_score": 55.9,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 32.621,
+            "observed_ratio": 0.3262,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 33% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 19.124,
+            "observed_ratio": 0.1912,
+            "normalised": 0.382,
+            "points_exact": 9.561752988047811,
+            "points": 9.6,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 19% against a saturation point of 50% \u2192 9.6 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.025,
+            "observed_ratio": 0.025,
+            "normalised": 0.25,
+            "points_exact": 6.249999999999978,
+            "points": 6.2,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.02 sg against a saturation point of 0.10 sg \u2192 6.2 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 2.704,
+            "observed_ratio": 0.027,
+            "normalised": 0.338,
+            "points_exact": 5.07059057466693,
+            "points": 5.1,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 3% against a saturation point of 8% \u2192 5.1 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-023",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1854.51,
+        3467.12
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": null,
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-024",
+      "formation": "Formation-Y",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1854.96,
+        3467.87
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2164.82,
+        "timestamp": "2026-01-01T08:40:00",
+        "risk_score": 55.0,
+        "risk_level": "MEDIUM",
+        "predicted_event": "Monitoring",
+        "thresholds_crossed": 3,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 33.49,
+            "observed_ratio": 0.3349,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 33% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 22.925,
+            "observed_ratio": 0.2293,
+            "normalised": 0.459,
+            "points_exact": 11.462728551336143,
+            "points": 11.5,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 23% against a saturation point of 50% \u2192 11.5 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.034,
+            "observed_ratio": 0.034,
+            "normalised": 0.34,
+            "points_exact": 8.500000000000007,
+            "points": 8.5,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.03 sg against a saturation point of 0.10 sg \u2192 8.5 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 0% against a saturation point of 8% \u2192 0.0 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-025",
+      "formation": "Formation-Y",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1854.07,
+        3466.67
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 3047.88,
+        "timestamp": "2026-01-02T05:40:00",
+        "risk_score": 94.7,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 58.214,
+            "observed_ratio": 0.5821,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 58% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 97.763,
+            "observed_ratio": 0.9776,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": true,
+            "detail": "Torque increase: observed 98% against a saturation point of 50% \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.095,
+            "observed_ratio": 0.095,
+            "normalised": 0.95,
+            "points_exact": 23.749999999999993,
+            "points": 23.7,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.09 sg against a saturation point of 0.10 sg \u2192 23.7 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 5.854,
+            "observed_ratio": 0.0585,
+            "normalised": 0.732,
+            "points_exact": 10.97690671528411,
+            "points": 11.0,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 6% against a saturation point of 8% \u2192 11.0 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 1,
+        "supporting_event_wells": [
+          "WELL-025"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0014",
+          "event": "Lost Circulation",
+          "formation": "Formation-Y",
+          "event_depth": 3090.92,
+          "severity": "Severe",
+          "alert_depth": 3086.58,
+          "alert_risk_score": 83.3,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 4.34,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.573,
+          "torque": 1.557,
+          "ecd": 1.071,
+          "pit_volume": 0.942
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          4.34
+        ],
+        "median": 4.34,
+        "min": 4.34,
+        "max": 4.34
+      }
+    },
+    {
+      "well_id": "WELL-026",
+      "formation": "Formation-X",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1856.43,
+        3467.47
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2302.06,
+        "timestamp": "2026-01-01T12:00:00",
+        "risk_score": 57.6,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 35.606,
+            "observed_ratio": 0.3561,
+            "normalised": 1.0,
+            "points_exact": 35.0,
+            "points": 35.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": true,
+            "detail": "ROP decline: observed 36% against a saturation point of 30% \u2192 35.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 12.993,
+            "observed_ratio": 0.1299,
+            "normalised": 0.26,
+            "points_exact": 6.49635036496351,
+            "points": 6.5,
+            "max_points": 25.0,
+            "threshold_crossed": false,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 13% against a saturation point of 50% \u2192 6.5 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.048,
+            "observed_ratio": 0.048,
+            "normalised": 0.48,
+            "points_exact": 12.00000000000001,
+            "points": 12.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.05 sg against a saturation point of 0.10 sg \u2192 12.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 2.214,
+            "observed_ratio": 0.0221,
+            "normalised": 0.277,
+            "points_exact": 4.150678866587958,
+            "points": 4.1,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 2% against a saturation point of 8% \u2192 4.2 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-027",
+      "formation": "Formation-X",
+      "evaluable": true,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1855.99,
+        3467.65
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2710.03,
+        "timestamp": "2026-01-01T21:40:00",
+        "risk_score": 82.8,
+        "risk_level": "CRITICAL",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 4,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 21.406,
+            "observed_ratio": 0.2141,
+            "normalised": 0.714,
+            "points_exact": 24.973375931842387,
+            "points": 25.0,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 21% against a saturation point of 30% \u2192 25.0 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 43.785,
+            "observed_ratio": 0.4378,
+            "normalised": 0.876,
+            "points_exact": 21.892440385591073,
+            "points": 21.9,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 44% against a saturation point of 50% \u2192 21.9 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.13,
+            "observed_ratio": 0.13,
+            "normalised": 1.0,
+            "points_exact": 25.0,
+            "points": 25.0,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": true,
+            "detail": "ECD increase: observed 0.13 sg against a saturation point of 0.10 sg \u2192 25.0 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 5.806,
+            "observed_ratio": 0.0581,
+            "normalised": 0.726,
+            "points_exact": 10.88577393379064,
+            "points": 10.9,
+            "max_points": 15.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 6% against a saturation point of 8% \u2192 10.9 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 2,
+        "supporting_event_wells": [
+          "WELL-014",
+          "WELL-027"
+        ],
+        "retrieved_evidence": []
+      },
+      "known_events": 1,
+      "events_detected_before": 1,
+      "per_event": [
+        {
+          "event_id": "EV-0015",
+          "event": "Stuck Pipe",
+          "formation": "Formation-X",
+          "event_depth": 2741.92,
+          "severity": "Severe",
+          "alert_depth": 2737.78,
+          "alert_risk_score": 79.0,
+          "alert_risk_level": "CRITICAL",
+          "lead_distance_m": 4.14,
+          "detected_before_event": true
+        }
+      ],
+      "circularity": {
+        "checked": true,
+        "window_m": 45,
+        "in_window_ratio_to_baseline": {
+          "rop": 0.608,
+          "torque": 1.619,
+          "ecd": 1.077,
+          "pit_volume": 0.957
+        },
+        "signature_detected": true,
+        "generator": "data/generate_demo_data.py applies rop*0.62, torque*1.55, ecd+0.08, pit-5 within +/-45 m of each event depth it generates"
+      },
+      "lead_distance_m": {
+        "values": [
+          4.14
+        ],
+        "median": 4.14,
+        "min": 4.14,
+        "max": 4.14
+      }
+    },
+    {
+      "well_id": "WELL-028",
+      "formation": "Formation-Z",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.36,
+        3467.71
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 3088.37,
+        "timestamp": "2026-01-02T06:40:00",
+        "risk_score": 64.4,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 2,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 16.501,
+            "observed_ratio": 0.165,
+            "normalised": 0.55,
+            "points_exact": 19.251577998196574,
+            "points": 19.2,
+            "max_points": 35.0,
+            "threshold_crossed": false,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 17% against a saturation point of 30% \u2192 19.3 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 49.325,
+            "observed_ratio": 0.4933,
+            "normalised": 0.987,
+            "points_exact": 24.662668665667177,
+            "points": 24.7,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 49% against a saturation point of 50% \u2192 24.7 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.082,
+            "observed_ratio": 0.082,
+            "normalised": 0.82,
+            "points_exact": 20.499999999999964,
+            "points": 20.5,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.08 sg against a saturation point of 0.10 sg \u2192 20.5 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 0% against a saturation point of 8% \u2192 0.0 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-029",
+      "formation": "Formation-Y",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.45,
+        3466.92
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": null,
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    },
+    {
+      "well_id": "WELL-030",
+      "formation": "Formation-Y",
+      "evaluable": false,
+      "frames_evaluated": 116,
+      "depth_range_m": [
+        1857.11,
+        3464.66
+      ],
+      "alert_threshold": 55.0,
+      "first_alert": {
+        "depth": 2122.72,
+        "timestamp": "2026-01-01T07:40:00",
+        "risk_score": 55.1,
+        "risk_level": "HIGH",
+        "predicted_event": "Potential Lost Circulation",
+        "thresholds_crossed": 3,
+        "contributors": [
+          {
+            "key": "rop",
+            "label": "ROP decline",
+            "weight": 0.35,
+            "saturation": 0.3,
+            "saturation_in_unit": 30.0,
+            "unit": "%",
+            "observed": 25.302,
+            "observed_ratio": 0.253,
+            "normalised": 0.843,
+            "points_exact": 29.519101672159167,
+            "points": 29.5,
+            "max_points": 35.0,
+            "threshold_crossed": true,
+            "threshold": 0.2,
+            "threshold_text": "ROP drop above 20% across the window",
+            "at_saturation": false,
+            "detail": "ROP decline: observed 25% against a saturation point of 30% \u2192 29.5 of 35 points"
+          },
+          {
+            "key": "torque",
+            "label": "Torque increase",
+            "weight": 0.25,
+            "saturation": 0.5,
+            "saturation_in_unit": 50.0,
+            "unit": "%",
+            "observed": 32.616,
+            "observed_ratio": 0.3262,
+            "normalised": 0.652,
+            "points_exact": 16.307789740341995,
+            "points": 16.3,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.15,
+            "threshold_text": "Torque rise above 15% across the window",
+            "at_saturation": false,
+            "detail": "Torque increase: observed 33% against a saturation point of 50% \u2192 16.3 of 25 points"
+          },
+          {
+            "key": "ecd",
+            "label": "ECD increase",
+            "weight": 0.25,
+            "saturation": 0.1,
+            "saturation_in_unit": 0.1,
+            "unit": "sg",
+            "observed": 0.037,
+            "observed_ratio": 0.037,
+            "normalised": 0.37,
+            "points_exact": 9.250000000000036,
+            "points": 9.3,
+            "max_points": 25.0,
+            "threshold_crossed": true,
+            "threshold": 0.03,
+            "threshold_text": "ECD rise above 0.03 sg across the window",
+            "at_saturation": false,
+            "detail": "ECD increase: observed 0.04 sg against a saturation point of 0.10 sg \u2192 9.3 of 25 points"
+          },
+          {
+            "key": "pit_volume",
+            "label": "Pit-volume decrease",
+            "weight": 0.15,
+            "saturation": 0.08,
+            "saturation_in_unit": 8.0,
+            "unit": "%",
+            "observed": 0.0,
+            "observed_ratio": 0.0,
+            "normalised": 0.0,
+            "points_exact": 0.0,
+            "points": 0.0,
+            "max_points": 15.0,
+            "threshold_crossed": false,
+            "threshold": 0.03,
+            "threshold_text": "Pit-volume drop above 3% across the window",
+            "at_saturation": false,
+            "detail": "Pit-volume decrease: observed 0% against a saturation point of 8% \u2192 0.0 of 15 points"
+          }
+        ],
+        "supporting_historical_events": 0,
+        "supporting_event_wells": [],
+        "retrieved_evidence": []
+      },
+      "known_events": 0,
+      "events_detected_before": 0,
+      "per_event": [],
+      "circularity": {
+        "checked": false,
+        "reason": "No events for this well"
+      },
+      "lead_distance_m": {
+        "values": [],
+        "median": null,
+        "min": null,
+        "max": null
+      }
+    }
+  ]
+}

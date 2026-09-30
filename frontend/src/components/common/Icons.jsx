@@ -283,6 +283,26 @@ export const IconHistory = make(
   </>
 );
 
+/* Live parameter trace: a trend line with sample points. */
+export const IconSignal = make(
+  <>
+    <path d="M1.8 11.4 5.4 7.2l2.6 2.2 4.4-5.6" />
+    <path d="M1.8 13.6h12.4" />
+    <path d="M10.4 3.8h2v2" />
+  </>
+);
+
+/* Lifecycle state machine: ordered stages with the active
+   node marked. Used by the alert lifecycle track. */
+export const IconLifecycle = make(
+  <>
+    <circle cx="3.4" cy="8" r="1.6" />
+    <circle cx="8" cy="8" r="1.6" />
+    <circle cx="12.6" cy="8" r="1.6" />
+    <path d="M5 8h1.4M9.6 8h1.4" />
+  </>
+);
+
 export const IconSpark = make(
   <>
     <path d="M8 1.8 9.5 6l4.2 1.5L9.5 9 8 13.2 6.5 9 2.3 7.5 6.5 6 8 1.8Z" />

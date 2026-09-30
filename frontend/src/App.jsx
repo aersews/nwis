@@ -6,6 +6,7 @@ import "./styles/shell.css";
 import "./styles/panels.css";
 import "./styles/charts.css";
 import "./styles/map.css";
+import "./styles/explain.css";
 import "./styles/overlays.css";
 
 import { TopBar } from "./components/layout/TopBar.jsx";
@@ -27,6 +28,7 @@ import { WhyThisAlert } from "./components/risk/WhyThisAlert.jsx";
 import { LiveTelemetry } from "./components/telemetry/LiveTelemetry.jsx";
 import { AlertTimeline } from "./components/alerts/AlertTimeline.jsx";
 import { AlertDetailModal } from "./components/alerts/AlertDetailModal.jsx";
+import { AlertLifecycle } from "./components/alerts/AlertLifecycle.jsx";
 import { HistoricalIntelligence } from "./components/history/HistoricalIntelligence.jsx";
 import { EvidencePanel } from "./components/evidence/EvidencePanel.jsx";
 import { DocumentExplorer } from "./components/evidence/DocumentExplorer.jsx";
@@ -37,6 +39,8 @@ import { WellDrawer } from "./components/wells/WellDrawer.jsx";
 import { WellComparison } from "./components/wells/WellComparison.jsx";
 import { GlobalSearch } from "./components/search/GlobalSearch.jsx";
 import { EvidenceChain } from "./components/dashboard/EvidenceChain.jsx";
+import { WhyNow } from "./components/why/WhyNow.jsx";
+import { PrototypeEvaluation } from "./components/evaluation/PrototypeEvaluation.jsx";
 
 import { useSystemStatus } from "./hooks/useSystemStatus.js";
 import { useCatalog } from "./hooks/useCatalog.js";
@@ -59,6 +63,7 @@ const DEFAULT_DEPTH = 2840;
 const SECTIONS = [
   "sec-map",
   "sec-risk",
+  "sec-whynow",
   "sec-why",
   "sec-telemetry",
   "sec-timeline",
@@ -66,7 +71,9 @@ const SECTIONS = [
   "sec-evidence",
   "sec-reco",
   "sec-documents",
-  "sec-offsets"
+  "sec-offsets",
+  "sec-lifecycle",
+  "sec-evaluation"
 ];
 
 export default function App() {
@@ -321,9 +328,16 @@ export default function App() {
   const severityBySection = useMemo(
     () => ({
       "sec-risk": severityKey(headlineLevel),
+      "sec-whynow":
+        intel.data?.why_now?.convergence
+          ? severityKey(headlineLevel)
+          : "none",
       "sec-why": severityKey(headlineLevel),
       "sec-history":
         (intel.data?.historical_event_count ?? 0) > 0 ? "medium" : "none",
+      "sec-lifecycle": intel.data?.alert?.lifecycle?.tracked
+        ? severityKey(headlineLevel)
+        : "none",
       "sec-telemetry": demo.running ? "info" : "none"
     }),
     [headlineLevel, intel.data, demo.running]
@@ -532,7 +546,7 @@ export default function App() {
               <PanelBoundary label="Live drilling telemetry">
               <Panel
                 id="sec-telemetry"
-                index="04"
+                index="05"
                 title="Live drilling telemetry"
                 subtitle="Streaming parameters"
                 tools={
@@ -556,6 +570,36 @@ export default function App() {
                   source={telemetrySource}
                   onSourceChange={setTelemetrySource}
                 />
+              </Panel>
+              </PanelBoundary>
+
+              <PanelBoundary label="Alert lifecycle">
+              <Panel
+                id="sec-lifecycle"
+                index="06"
+                title="Alert lifecycle"
+                subtitle="Detected → correlated → acknowledged → resolved"
+                severity={
+                  intel.data?.alert?.lifecycle?.tracked
+                    ? intelBand.key
+                    : "none"
+                }
+                bodyClass="panel__body--flush"
+                tools={
+                  intel.data?.alert?.lifecycle?.tracked ? (
+                    <span className="label mono">
+                      {intel.data.alert.lifecycle.tracked.id}
+                    </span>
+                  ) : (
+                    <span className="label">no active alert</span>
+                  )
+                }
+              >
+            <AlertLifecycle
+              lifecycle={intel.data?.alert?.lifecycle}
+              contextual={intel.data}
+              onChanged={intel.retry}
+            />
               </Panel>
               </PanelBoundary>
             </div>
@@ -586,10 +630,39 @@ export default function App() {
               </Panel>
               </PanelBoundary>
 
+              <PanelBoundary label="Why now panel">
+              <Panel
+                id="sec-whynow"
+                index="03"
+                title="Why now?"
+                subtitle="Convergence of live behaviour and recorded experience"
+                severity={
+                  intel.data?.why_now?.convergence
+                    ? intelBand.key
+                    : "none"
+                }
+                accent
+              >
+                {intel.loading && !intel.data ? (
+                  <SkeletonRows rows={4} columns={[0.5, 0.3, 0.2]} />
+                ) : (
+                  <WhyNow
+                    whyNow={intel.data?.why_now}
+                    liveFrame={liveFrame}
+                    currentDepth={
+                      liveFrame?.depth ??
+                      intel.data?.well?.depth ??
+                      intelDepth
+                    }
+                  />
+                )}
+              </Panel>
+              </PanelBoundary>
+
               <PanelBoundary label="Alert rationale panel">
               <Panel
                 id="sec-why"
-                index="03"
+                index="04"
                 title="Why this alert"
                 severity={intelBand.key}
               >
@@ -614,7 +687,7 @@ export default function App() {
           <PanelBoundary label="Alert timeline">
           <Panel
             id="sec-timeline"
-            index="05"
+            index="12"
             title="Alert timeline"
             subtitle="Derived from the backend stream"
             severity={intelBand.key}
@@ -650,7 +723,7 @@ export default function App() {
             <PanelBoundary label="Historical intelligence">
             <Panel
               id="sec-history"
-              index="06"
+              index="07"
               title="Historical intelligence"
               subtitle="Depth correlation"
               severity={
@@ -669,7 +742,7 @@ export default function App() {
             <PanelBoundary label="Recommendation panel">
             <Panel
               id="sec-reco"
-              index="08"
+              index="09"
               title="NWIS recommendation"
               subtitle="Decision support"
               severity="info"
@@ -694,7 +767,7 @@ export default function App() {
           <PanelBoundary label="Evidence panel">
           <Panel
             id="sec-evidence"
-            index="07"
+            index="08"
             title="Evidence"
             subtitle="Every conclusion is traceable to a source document"
             severity="info"
@@ -704,6 +777,11 @@ export default function App() {
             ) : (
               <EvidencePanel
                 contextual={intel.data}
+                currentDepth={
+                  liveFrame?.depth ??
+                  intel.data?.well?.depth ??
+                  intelDepth
+                }
                 onViewSource={(source) => setDocumentSource(source)}
                 onOpenDocuments={() => go("sec-documents")}
               />
@@ -722,7 +800,7 @@ export default function App() {
           <PanelBoundary label="Document intelligence">
           <Panel
             id="sec-documents"
-            index="09"
+            index="10"
             title="Document intelligence"
             subtitle="Retrieval layer inventory"
             severity="info"
@@ -750,7 +828,7 @@ export default function App() {
           <PanelBoundary label="Offset explorer">
           <Panel
             id="sec-offsets"
-            index="10"
+            index="11"
             title="Nearby wells"
             subtitle="Offset explorer"
             tools={
@@ -768,6 +846,7 @@ export default function App() {
                 offsets={intel.data.offsets}
                 activeFormation={intel.data.well?.formation}
                 selectedWellId={selectedOffset?.well_id}
+                diagnostics={intel.data.offset_diagnostics}
                 onSelectWell={setSelectedOffset}
                 onOpenWell={(offset) => {
                   setSelectedOffset(offset);
@@ -782,6 +861,19 @@ export default function App() {
                 onRetry={intel.retry}
               />
             )}
+          </Panel>
+          </PanelBoundary>
+
+          {/* ============ EVALUATION + CLAIM AUDIT ============ */}
+          <PanelBoundary label="Prototype evaluation">
+          <Panel
+            id="sec-evaluation"
+            index="13"
+            title="Prototype evaluation & claim audit"
+            subtitle="What was measured, and what was deliberately not"
+            severity="info"
+          >
+            <PrototypeEvaluation />
           </Panel>
           </PanelBoundary>
 
@@ -824,6 +916,7 @@ export default function App() {
         currentFormation={intel.data?.well?.formation}
         wellRecord={offsetRecord}
         documents={catalog.documents}
+        activeWell={ACTIVE_WELL}
         onViewSource={setDocumentSource}
       />
       </PanelBoundary>

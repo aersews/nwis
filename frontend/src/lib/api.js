@@ -28,7 +28,10 @@ export class ApiError extends Error {
 
 const DEFAULT_TIMEOUT = 20_000;
 
-async function request(path, { signal, timeout = DEFAULT_TIMEOUT } = {}) {
+async function request(
+  path,
+  { signal, timeout = DEFAULT_TIMEOUT, method = "GET" } = {}
+) {
   const url = `${API_BASE}${path}`;
   const controller = new AbortController();
 
@@ -44,6 +47,7 @@ async function request(path, { signal, timeout = DEFAULT_TIMEOUT } = {}) {
 
   try {
     const response = await fetch(url, {
+      method,
       signal: controller.signal,
       headers: { Accept: "application/json" }
     });
@@ -194,7 +198,54 @@ export const api = {
     request(
       `/api/nwis/${json(wellId)}?depth=${depth}`,
       { ...opts, timeout: 30_000 }
-    )
+    ),
+
+  /* --- explainability --- */
+
+  offsetDiagnostics: (wellId, opts) =>
+    request(
+      `/api/wells/${json(wellId)}/offset-diagnostics`,
+      opts
+    ),
+  riskContributors: (wellId, depth, opts) =>
+    request(
+      `/api/risk/contributors?well_id=${json(wellId)}&depth=${depth}`,
+      { ...opts, timeout: 25_000 }
+    ),
+  riskModel: (opts) => request("/api/risk/model", opts),
+  whyNow: (wellId, depth, opts) =>
+    request(
+      `/api/why-now/${json(wellId)}?depth=${depth}`,
+      { ...opts, timeout: 25_000 }
+    ),
+
+  /* --- alert lifecycle (live state, never cached) --- */
+
+  alerts: (wellId, opts) =>
+    request(
+      wellId
+        ? `/api/alerts?well_id=${json(wellId)}`
+        : "/api/alerts",
+      opts
+    ),
+  alertState: (alertId, state, opts) =>
+    request(
+      `/api/alerts/${json(alertId)}/state?state=${json(state)}`,
+      { ...opts, method: "POST" }
+    ),
+
+  /* --- evaluation and claim audit --- */
+
+  claimAudit: (opts) => request("/api/claim-audit", opts),
+  evaluation: (opts) =>
+    request("/api/evaluation", { ...opts, timeout: 25_000 }),
+  replay: (opts) =>
+    request("/api/evaluation/replay", {
+      ...opts,
+      timeout: 25_000
+    }),
+  retrievalConfig: (opts) =>
+    request("/api/retrieval/config", opts)
 };
 
 export const liveSocketUrl = (wellId) =>

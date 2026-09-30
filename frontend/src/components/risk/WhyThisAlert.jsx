@@ -2,10 +2,8 @@ import { memo } from "react";
 
 import {
   PRECURSOR_RULE_TEXT,
-  SIGNALS,
   bandForScore,
   formatSignalDelta,
-  signalDelta,
   signalForReason
 } from "../../lib/risk.js";
 import {
@@ -17,54 +15,15 @@ import {
 } from "../common/Icons.jsx";
 import { label as fmtLabel, metres, num } from "../../lib/format.js";
 
-/* Saturation points are the denominators used by
-   ml/risk_engine.calculate_risk — a signal at or above its
-   saturation point contributes its full weight to the score. */
-const SATURATION = {
-  rop: 30,
-  torque: 50,
-  ecd: 0.1,
-  pit_volume: 8
-};
-
-function SignalTile({ signal, value }) {
-  const saturation = SATURATION[signal.key];
-  const ratio =
-    typeof value === "number" && saturation
-      ? Math.max(0, Math.min(100, (Math.abs(value) / saturation) * 100))
-      : 0;
-  const band = bandForScore(ratio);
-  const display = formatSignalDelta(signal.key, {
-    rop_drop: value,
-    torque_rise: value,
-    ecd_rise: value,
-    pit_drop: value
-  });
-
-  return (
-    <div
-      className="signal-tile"
-      title={`${signal.longName}: ${display ?? "not reported"} — saturates the risk contribution at ${
-        SATURATION[signal.key]
-      }${signal.key === "ecd" ? " sg" : "%"}`}
-    >
-      <span className="signal-tile__name">{signal.name}</span>
-      <span className="signal-tile__bar">
-        <span
-          className="signal-tile__fill"
-          style={{ width: `${ratio}%`, "--tile-color": band.color }}
-        />
-      </span>
-      <span className="signal-tile__value">{display ?? "—"}</span>
-    </div>
-  );
-}
-
 /**
  * "Why this alert?" — the single most-read panel on the screen.
  * It states the trigger, the contributing signal, the historical
  * correlation and the basis, in that order, with a link into the
  * full rationale.
+ *
+ * The quantitative breakdown lives in RiskContributors, inside
+ * the risk panel, so there is exactly one place on the screen
+ * where the arithmetic is shown.
  */
 function WhyThisAlertBase({ contextual, liveFrame, onOpenRationale }) {
   const risk = contextual?.risk ?? null;
@@ -234,32 +193,6 @@ function WhyThisAlertBase({ contextual, liveFrame, onOpenRationale }) {
             </span>
           </span>
         </div>
-      </div>
-
-      <div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-            marginBottom: "var(--s-3)"
-          }}
-        >
-          <span className="label">Signal contribution</span>
-          <span
-            className="label"
-            style={{ color: "var(--text-faint)", letterSpacing: "0.08em" }}
-          >
-            Share of score at saturation
-          </span>
-        </div>
-        {SIGNALS.map((signal) => (
-          <SignalTile
-            key={signal.key}
-            signal={signal}
-            value={signalDelta(signal.key, signals)}
-          />
-        ))}
       </div>
 
       {onOpenRationale ? (

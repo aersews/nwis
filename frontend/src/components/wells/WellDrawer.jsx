@@ -18,8 +18,10 @@ import {
   IconFile,
   IconHistory,
   IconInfo,
-  IconRoute
+  IconRoute,
+  IconSpark
 } from "../common/Icons.jsx";
+import { OffsetFactors } from "./OffsetFactors.jsx";
 
 const WINDOW = 50;
 
@@ -50,6 +52,7 @@ export function WellDrawer({
   currentFormation,
   wellRecord,
   documents,
+  activeWell,
   onViewSource
 }) {
   const [events, setEvents] = useState({ status: "idle", rows: [] });
@@ -211,6 +214,27 @@ export function WellDrawer({
             only trajectory attribute recorded.
           </span>
         </p>
+      </Section>
+
+      <Section
+        icon={<IconSpark size={13} style={{ color: "var(--warn)" }} />}
+        title={`Why ${fmtLabel(wellId, "this well")}?`}
+      >
+        {well?.factors ? (
+          <OffsetFactors
+            offset={well}
+            activeWell={activeWell}
+          />
+        ) : (
+          <p className="note">
+            <IconInfo size={13} className="note__icon" />
+            <span>
+              No factor breakdown was returned for this well. The
+              relevance score above is reported as-is rather than
+              reconstructed here.
+            </span>
+          </p>
+        )}
       </Section>
 
       <Section icon={<IconHistory size={13} style={{ color: "var(--warn)" }} />} title={`Structured event log · ${events.rows.length}`}>

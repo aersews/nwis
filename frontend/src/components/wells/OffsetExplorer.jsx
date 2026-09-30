@@ -6,6 +6,7 @@ import { isNum, km, label as fmtLabel, percent } from "../../lib/format.js";
 import {
   IconChevronRight,
   IconFilter,
+  IconRoute,
   IconSearch,
   IconSort
 } from "../common/Icons.jsx";
@@ -27,7 +28,14 @@ const EVENT_TYPES = [
  * Offset-well explorer. Every control narrows the *real* ranking
  * returned by /api/wells/{id}/offsets; nothing is re-scored here.
  */
-function OffsetExplorerBase({ offsets, activeFormation, onSelectWell, onOpenWell, selectedWellId }) {
+function OffsetExplorerBase({
+  offsets,
+  activeFormation,
+  onSelectWell,
+  onOpenWell,
+  selectedWellId,
+  diagnostics
+}) {
   const [query, setQuery] = useState("");
   const [maxDistance, setMaxDistance] = useState(50);
   const [minSimilarity, setMinSimilarity] = useState(0);
@@ -108,6 +116,34 @@ function OffsetExplorerBase({ offsets, activeFormation, onSelectWell, onOpenWell
 
   return (
     <>
+      {diagnostics?.statement ? (
+        <div
+          className="banner banner--info"
+          data-sev={diagnostics.nearest_is_top_ranked ? "medium" : "info"}
+        >
+          <IconRoute
+            size={14}
+            className="banner__icon"
+          />
+          <div className="banner__body">
+            <span className="banner__title">
+              This is not a nearest-well lookup
+            </span>
+            <span className="banner__text">
+              {diagnostics.statement}
+            </span>
+            {diagnostics.nearest_is_top_ranked === false ? (
+              <span className="banner__text banner__text--mono">
+                nearest {fmtLabel(diagnostics.nearest_well)} (rank{" "}
+                {diagnostics.nearest_rank} of{" "}
+                {diagnostics.candidates_scored}) → top{" "}
+                {fmtLabel(diagnostics.top_ranked_well)}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
       <div className="filters">
         <div className="field" style={{ gridColumn: "span 2", minWidth: 140 }}>
           <label className="field__label" htmlFor="offset-search">
@@ -259,6 +295,14 @@ function OffsetExplorerBase({ offsets, activeFormation, onSelectWell, onOpenWell
           {filtered.map((offset) => {
             const tier = similarityTier(offset.similarity_score);
             const selected = offset.well_id === selectedWellId;
+            const factors = offset.factors ?? null;
+            const topFactor = factors
+              ? Object.values(factors)
+                  .filter((f) => f.available)
+                  .sort(
+                    (a, b) => (b.score ?? 0) - (a.score ?? 0)
+                  )[0]
+              : null;
 
             return (
               <button
@@ -270,6 +314,11 @@ function OffsetExplorerBase({ offsets, activeFormation, onSelectWell, onOpenWell
                   onOpenWell?.(offset);
                 }}
                 aria-selected={selected}
+                title={
+                  topFactor
+                    ? `Strongest factor: ${topFactor.label} — ${topFactor.detail}`
+                    : undefined
+                }
               >
                 <span className="well-row__rank">
                   {String(offsets.indexOf(offset) + 1).padStart(2, "0")}
@@ -284,7 +333,11 @@ function OffsetExplorerBase({ offsets, activeFormation, onSelectWell, onOpenWell
 
                 <span className="well-row__sim">
                   <span className="well-row__sim-head">
-                    <span>similarity</span>
+                    <span>
+                      {topFactor
+                        ? `top factor: ${topFactor.label}`
+                        : "similarity"}
+                    </span>
                     <b>{percent(offset.similarity_score, 1)}</b>
                   </span>
                   <span

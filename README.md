@@ -18,7 +18,7 @@ designed as **decision support, not autonomous control**.
 One screen answers, in order:
 
 ```
-LIVE STATE → RISK → WHY → HISTORICAL CONTEXT → OFFSET WELLS
+LIVE STATE → RISK → WHY NOW → WHY → HISTORICAL CONTEXT → OFFSET WELLS
            → EVIDENCE → RECOMMENDATION → ACTION
 ```
 
@@ -34,7 +34,30 @@ every panel.
 
 ---
 
+## The one number that matters most
+
+> The dataset's generator injects the precursor signature within
+> ±45 m of every event it creates. Replay therefore returns a
+> **100 % detection rate that is a property of the data, not of the
+> engine.** NWIS detects this at runtime, proves it empirically, and
+> **withholds** the figure. See
+> [`docs/ARCHITECTURE.md` §6](docs/ARCHITECTURE.md).
+
+This is why there is no accuracy, precision, recall or F1 number
+anywhere in this system, and why the evaluation panel on the
+dashboard shows as much space for "Not measured" as for measured
+results.
+
+---
+
 ## Run it
+
+### Quick start (both services)
+
+```bash
+./scripts/dev.sh          # starts both, waits until they answer
+./scripts/dev.sh stop
+```
 
 ### 1. Backend
 
@@ -66,29 +89,58 @@ npm run preview      # serve the build
 npm run lint         # oxlint
 ```
 
+### 3. Evaluation, replay and smoke test
+
+```bash
+python -m evaluation.evaluate        # → evaluation/results/evaluation.json
+python -m evaluation.replay --all    # → evaluation/results/replay.json
+python -m evaluation.smoke           # → evaluation/results/smoke.json
+```
+
+`evaluation.smoke` drives the running dashboard in a headless
+browser and fails on any console error, page error or failed
+request. It is how the "zero critical frontend errors" claim is
+demonstrated rather than asserted.
+
+The smoke test needs a browser:
+
+```bash
+pip install playwright && python -m playwright install chromium
+```
+
 ---
 
-## Demonstration sequence
+## Measured results
 
-The scripted scenario is a real backend endpoint, not a UI animation.
+From `python -m evaluation.evaluate`, on the synthetic dataset:
 
-1. The dashboard opens at `WELL-001`, 2 840 m, `Formation-Y`, with the
-   offset neighbourhood, the ±50 m depth correlation and three indexed
-   source documents already loaded.
-2. Press **▶** in the demo bar. The sequence advances 2 800 → 2 860 m
-   while the risk index moves **LOW 20 → MEDIUM 38 → CRITICAL 95**.
-3. The alert timeline records each precursor threshold as it is crossed
-   and the historical correlation as it is identified.
-4. The sequence **holds** at the critical end so the evidence chain
-   stays inspectable, then reports `Sequence complete`.
-5. Inspect: the offset drawer, **Compare with active well**, the source
-   document behind any citation, the full alert rationale, or the
-   provenance table.
+| Measurement | Result |
+| --- | --- |
+| Top-ranked offset is **not** the nearest well | **86.7 %** (26 / 30 wells) |
+| Top-1 offset shares the active formation | 96.7 % (29 / 30 wells) |
+| Risk engine deterministic on re-score | 1 170 / 1 170 windows |
+| Contributor breakdown reconciles to the score | 1 170 / 1 170 windows |
+| Median risk latency | 0.51 ms |
+| Median retrieval latency | ~25 ms |
+| Median replay lead distance | 4.42 m |
+| Headless smoke test | 19 / 19 steps, 0 console errors |
 
-Transport controls: start · pause · step · restart, and 0.5× / 1× / 2× /
-4× sampling speed. The sequence is bounded at 2 860 m — the deepest step
-that keeps a historical event inside the ±50 m comparison band, so the
-evidence never disappears at the moment it matters.
+**Deliberately not measured**, each with the reason recorded in
+`evaluation.json → null_field_reasons`: alert precision, alert
+recall, false-alarm rate, median lead time, offset Top-1/Top-3
+relevance, and any accuracy figure.
+
+---
+
+## Documentation
+
+| Document | Contents |
+| --- | --- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Module map, the intelligence chain, the circularity finding, and the **PRODUCTION PATH** for WITSML/ETP, security, RBAC, versioning and drift |
+| [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | The 3-minute SIH run, anticipated judge questions, and recovery steps |
+| [`docs/SIH_SLIDES.md`](docs/SIH_SLIDES.md) | The six submission slides and the PPT quality audit |
+| [`docs/REFERENCES.md`](docs/REFERENCES.md) | Standards and methods, with what each contributes and where it is used |
+| Live in the app | `GET /api/claim-audit` — every system claim classified against the code |
 
 ---
 
@@ -101,33 +153,44 @@ All of the following are existing routes, consumed as-is:
 | `GET /api/nwis/{well_id}?depth=` | Unified contextual intelligence: offsets, depth correlation, document evidence, recommendation, alert, explainability |
 | `GET /api/simulation/{well_id}?step=` | Scripted demonstration sequence and live signal index |
 | `ws://…/ws/live/{well_id}` | Streaming telemetry replay scored per frame by the same risk engine |
-| `GET /api/wells/{well_id}/offsets` | Offset similarity ranking |
+| `GET /api/wells/{well_id}/offsets` | Offset similarity ranking, with the per-factor breakdown |
 | `GET /api/wells` · `GET /api/events` · `GET /api/evidence/{well_id}` | Reference tables and structured event log |
-| `GET /api/rag/search?q=` | FAISS sentence-transformer retrieval |
+| `GET /api/rag/search?q=&mode=` | Hybrid (BM25 + vector) retrieval; `mode=vector` reproduces the vector-only baseline |
 | `GET /api/documents` · `GET /api/documents/detail` | Retrieval-layer inventory and full indexed text |
 | `GET /api/risk/depth` | Depth-window analysis on its own |
-| `GET /` | Liveness |
+| `GET /` · `GET /api/status` | Liveness |
 
-Two read-only routes were **added** for the document explorer, both of
-which only read the existing FAISS index and chunk metadata:
+### Explainability
 
-- `GET /api/documents` — document/chunk/vector counts, embedding
-  dimension, and per-source metadata. The Document Intelligence panel
-  reports these figures instead of illustrative ones.
-- `GET /api/documents/detail?source=` — the full indexed text of one
-  source, so any AI statement can be checked against the original
-  wording.
+| Route | Returns |
+| --- | --- |
+| `GET /api/risk/contributors` | Full additive breakdown of the index, reconciled to the headline |
+| `GET /api/why-now/{well_id}` | Convergence explanation, optionally from a supplied live frame |
+| `GET /api/wells/{well_id}/offset-diagnostics` | Whether the ranking is more than a nearest-well lookup |
+| `GET /api/risk/model` | Rule set, thresholds, saturation points, and an explicit statement of what the model is not |
+| `GET /api/retrieval/config` | Live hybrid weights and supported filters |
 
-`GET /api/status` is an alias of `GET /`, exposed under `/api` only so a
-dev server can proxy the API without shadowing its own index document.
-The frontend falls back to `GET /` if it is absent.
+### Alert lifecycle
+
+| Route | Returns |
+| --- | --- |
+| `GET /api/alerts` · `GET /api/alerts/{id}` | Lifecycle state and full transition history |
+| `POST /api/alerts/{id}/state?state=` | Advance to `ACKNOWLEDGED` or `RESOLVED`; validated server-side |
+
+### Assurance
+
+| Route | Returns |
+| --- | --- |
+| `GET /api/claim-audit` | 39 claims, each classified as IMPLEMENTED / DEMONSTRATED / MEASURED / PROPOSED / PRODUCTION PATH / NOT VALIDATED |
+| `GET /api/evaluation` | The measured benchmark, read from `evaluation.json` |
+| `GET /api/evaluation/replay` | Replay results, including the circularity finding |
 
 ---
 
 ## Two risk indices, never blended
 
-The backend produces two different numbers and the interface keeps them
-apart rather than mixing them:
+The backend produces two different numbers and the interface keeps
+them apart rather than mixing them:
 
 - **Live signal index** — from the streaming parameters. This is what
   moves during the demonstration and what an operator reacts to now.
@@ -136,10 +199,16 @@ apart rather than mixing them:
   the score escalated.
 
 Both are labelled **explainable indices, not probabilities of failure**,
-on the surface itself. In this demonstration the backend applies a fixed
-degraded precursor record when scoring the contextual index, so that
-figure saturates while the live index tracks the stream; the risk panel
-states this explicitly.
+on the surface itself, and the backend returns
+`is_probability: false` with every score. In this demonstration the
+backend applies a fixed degraded precursor record when scoring the
+contextual index, so that figure saturates while the live index tracks
+the stream; the risk panel states this explicitly.
+
+The contributor bars under the headline number are the same
+`weight × normalised change` products the engine summed to produce
+it, and they are reconciled so they always add up. The backend
+asserts that identity and the panel states it if it ever fails.
 
 ---
 
@@ -167,28 +236,32 @@ src/
                           Modal, PanelBoundary, Icons
     layout/               TopBar, DemoBar, SectionRail, DataProvenance
     map/                  WellMap, markers, RadiusControl, MapLegend
-    risk/                 RiskPanel, RiskMeter, RiskLadder, WhyThisAlert
+    risk/                 RiskPanel, RiskMeter, RiskLadder,
+                          WhyThisAlert, RiskContributors
     telemetry/            LiveTelemetry
     history/              HistoricalIntelligence, DepthLadder
     evidence/             EvidencePanel, DocumentExplorer, DocumentViewer
-    recommendation/       RecommendationPanel, DecisionSupportNotice
-    wells/                OffsetExplorer, WellDrawer, WellComparison
-    alerts/               AlertTimeline, AlertDetailModal
+    recommendation/       RecommendationPanel
+    wells/                OffsetExplorer, WellDrawer, WellComparison,
+                          OffsetFactors
+    alerts/               AlertTimeline, AlertDetailModal, AlertLifecycle
     search/               GlobalSearch
+    why/                  WhyNow
+    evaluation/           PrototypeEvaluation
     dashboard/            EvidenceChain
   styles/                 tokens · base · shell · panels · charts ·
-                          map · overlays
+                          map · explain · overlays
 ```
 
 Principles the structure enforces:
 
 - **No fabricated values.** A missing field renders as *Not available*.
   Capabilities absent from the dataset — directional surveys, formation
-  boundaries, offset time series — are stated as absent rather than
-  approximated.
+  boundaries, offset time series, TVD — are stated as absent rather
+  than approximated.
 - **No duplicated reads.** Reference data is fetched once per session
-  through a shared cache; unified intelligence refetches once per 10 m of
-  depth advance; the telemetry socket connects only when the replay
+  through a shared cache; unified intelligence refetches once per 10 m
+  of depth advance; the telemetry socket connects only when the replay
   source is selected.
 - **No blank cards.** Every API-backed region renders a loading,
   error or empty state, and every panel sits inside an error boundary so
@@ -215,9 +288,9 @@ Desktop-first, with breakpoints at 1560 / 1360 / 1200 / 1080 / 900 /
 re-orders to the mobile reading sequence:
 
 ```
-map → risk → live parameters → rationale
+map → lifecycle → risk → why now → live parameters → rationale
      → alert timeline → depth context → decision
-     → evidence → documents → offsets
+     → evidence → documents → offsets → evaluation
 ```
 
 DOM order is unchanged; only the visual order moves.
@@ -227,10 +300,15 @@ DOM order is unchanged; only the visual order moves.
 ## MVP scope
 
 - Synthetic historical offset-well dataset
-- Contextual offset similarity ranking
-- Lost-circulation and stuck-pipe risk scoring
-- Simulated live drilling stream
+- Contextual offset similarity ranking with per-factor explanation
+- Rule-based risk index with an exact additive contributor breakdown
+- Depth-window correlation, reported as such rather than as
+  geological correlation
+- Simulated live drilling stream over WebSocket
 - FastAPI backend + WebSocket
-- Semantic RAG over PDF/OCR-extracted reports
+- Hybrid BM25 + vector retrieval over narrative incident documents
 - FAISS vector search with sentence-transformer embeddings
+- Validated alert lifecycle with server-side transitions
 - Evidence-traceable recommendation engine
+- Reproducible evaluation, replay and smoke-test harnesses
+- Machine-readable claim audit

@@ -6,24 +6,32 @@ const GROUPS = [
     items: [
       { id: "sec-map", index: "01", label: "Geospatial" },
       { id: "sec-risk", index: "02", label: "Risk" },
-      { id: "sec-why", index: "03", label: "Rationale" }
+      { id: "sec-whynow", index: "03", label: "Why now" },
+      { id: "sec-why", index: "04", label: "Rationale" }
     ]
   },
   {
     label: "Streaming",
     items: [
-      { id: "sec-telemetry", index: "04", label: "Telemetry" },
-      { id: "sec-timeline", index: "05", label: "Alerts" }
+      { id: "sec-telemetry", index: "05", label: "Telemetry" },
+      { id: "sec-lifecycle", index: "06", label: "Lifecycle" },
+      { id: "sec-timeline", index: "12", label: "Alerts" }
     ]
   },
   {
     label: "Memory",
     items: [
-      { id: "sec-history", index: "06", label: "Depth context" },
-      { id: "sec-evidence", index: "07", label: "Evidence" },
-      { id: "sec-reco", index: "08", label: "Decision" },
-      { id: "sec-documents", index: "09", label: "Documents" },
-      { id: "sec-offsets", index: "10", label: "Offsets" }
+      { id: "sec-history", index: "07", label: "Depth context" },
+      { id: "sec-evidence", index: "08", label: "Evidence" },
+      { id: "sec-reco", index: "09", label: "Decision" },
+      { id: "sec-documents", index: "10", label: "Documents" },
+      { id: "sec-offsets", index: "11", label: "Offsets" }
+    ]
+  },
+  {
+    label: "Assurance",
+    items: [
+      { id: "sec-evaluation", index: "13", label: "Evaluation" }
     ]
   }
 ];

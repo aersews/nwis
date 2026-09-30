@@ -11,6 +11,7 @@ import { label as fmtLabel, num } from "../../lib/format.js";
 import { RISK_BANDS, bandForLevel, bandForScore } from "../../lib/risk.js";
 import { RiskMeter } from "./RiskMeter.jsx";
 import { RiskLadder } from "./RiskLadder.jsx";
+import { RiskContributors } from "./RiskContributors.jsx";
 
 /**
  * PRIMARY RISK SURFACE.
@@ -221,6 +222,8 @@ function RiskPanelBase({
         </p>
       ) : null}
 
+      <RiskContributors risk={risk} liveScore={liveScore} />
+
       {liveScore === null ? (
         <div className="banner banner--info" style={{ padding: "var(--s-4) var(--s-5)" }}>
           <IconInfo size={14} className="banner__icon" />
@@ -245,6 +248,13 @@ function RiskPanelBase({
           backend applies a fixed degraded precursor record when scoring
           the contextual index, so that figure saturates while the live
           signal index tracks the streamed parameters.
+          {risk?.is_probability === false ? (
+            <>
+              {" "}
+              The backend reports{" "}
+              <span className="mono">is_probability: false</span>.
+            </>
+          ) : null}
         </span>
       </p>
     </div>

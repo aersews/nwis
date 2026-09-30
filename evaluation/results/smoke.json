@@ -1,0 +1,88 @@
+{
+  "url": "http://127.0.0.1:5173",
+  "steps": [
+    {
+      "step": "top bar shows the system identity",
+      "ok": true
+    },
+    {
+      "step": "active well and depth are present",
+      "ok": true
+    },
+    {
+      "step": "risk index rendered",
+      "ok": true
+    },
+    {
+      "step": "why-now panel present",
+      "ok": true
+    },
+    {
+      "step": "risk contributor breakdown present",
+      "ok": true
+    },
+    {
+      "step": "alert lifecycle panel present",
+      "ok": true
+    },
+    {
+      "step": "offset explorer present",
+      "ok": true
+    },
+    {
+      "step": "not-a-nearest-well statement shown",
+      "ok": true
+    },
+    {
+      "step": "evaluation panel present",
+      "ok": true
+    },
+    {
+      "step": "claim audit counts rendered",
+      "ok": true
+    },
+    {
+      "step": "open first offset well",
+      "ok": true
+    },
+    {
+      "step": "why-this-well factors visible",
+      "ok": true
+    },
+    {
+      "step": "close the offset drawer",
+      "ok": true
+    },
+    {
+      "step": "evidence shows depth difference",
+      "ok": true
+    },
+    {
+      "step": "expand first evidence",
+      "ok": true
+    },
+    {
+      "step": "evaluation shows withheld metrics",
+      "ok": true
+    },
+    {
+      "step": "start the demonstration sequence",
+      "ok": true
+    },
+    {
+      "step": "risk escalates during the run",
+      "ok": true
+    },
+    {
+      "step": "renders at 420px",
+      "ok": true
+    }
+  ],
+  "steps_passed": 19,
+  "steps_total": 19,
+  "console_errors": [],
+  "page_errors": [],
+  "failed_requests": [],
+  "critical_console_errors": 0,
+  "passed": true
+}
